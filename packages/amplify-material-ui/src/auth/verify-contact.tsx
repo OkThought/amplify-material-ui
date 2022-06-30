@@ -3,9 +3,7 @@ import { useIntl, FormattedMessage } from 'react-intl';
 import { useAuthContext, useVerifyContact } from 'amplify-auth-hooks';
 import { ConsoleLogger as Logger } from '@aws-amplify/core';
 import { Button, Grid, FormControlLabel, Radio } from '@mui/material';
-import { Theme } from '@mui/material/styles';
-import makeStyles from '@mui/styles/makeStyles';
-import createStyles from '@mui/styles/createStyles';
+import { styled, Theme } from '@mui/material/styles';
 import { Formik, Field, Form } from 'formik';
 import { RadioGroup, TextField } from 'formik-mui';
 
@@ -15,20 +13,25 @@ import { ChangeAuthStateLink } from './change-auth-state-link';
 
 const logger = new Logger('VerifyContact');
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    form: {
-      width: '100%', // Fix IE 11 issue.
-      marginTop: theme.spacing(1),
-    },
-    submit: {
-      margin: theme.spacing(3, 0, 2),
-    },
-  }),
-);
+const PREFIX = 'VerifyContact';
+
+const classes = {
+  form: `${PREFIX}-form`,
+  submit: `${PREFIX}-submit`,
+};
+
+const StyledFormik = styled(Formik)(({ theme }: { theme: Theme }) => ({
+  [`& .${classes.form}`]: {
+    width: '100%', // Fix IE 11 issue.
+    marginTop: theme.spacing(1),
+  },
+
+  [`& .${classes.submit}`]: {
+    margin: theme.spacing(3, 0, 2),
+  },
+})) as typeof Formik;
 
 export const VerifyContact: React.FC = () => {
-  const classes = useStyles();
   const { formatMessage } = useIntl();
   const { showNotification } = useNotificationContext();
   const { authData } = useAuthContext();
@@ -68,7 +71,7 @@ export const VerifyContact: React.FC = () => {
     const { email, phone_number: phoneNumber } = unverified;
 
     return (
-      <Formik<{ contact: string }>
+      <StyledFormik<{ contact: string }>
         initialValues={{
           contact: '',
         }}
@@ -124,12 +127,12 @@ export const VerifyContact: React.FC = () => {
             </Form>
           </FormSection>
         )}
-      </Formik>
+      </StyledFormik>
     );
   };
 
   const submitView = (): React.ReactElement => (
-    <Formik<{ code: string }>
+    <StyledFormik<{ code: string }>
       initialValues={{
         code: '',
       }}
@@ -176,7 +179,7 @@ export const VerifyContact: React.FC = () => {
           </Form>
         </FormSection>
       )}
-    </Formik>
+    </StyledFormik>
   );
 
   return verifyAttr ? submitView() : verifyView();

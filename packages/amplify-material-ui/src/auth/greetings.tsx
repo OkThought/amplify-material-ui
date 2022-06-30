@@ -3,30 +3,36 @@ import { FormattedMessage } from 'react-intl';
 import { useAuthContext, useSignOut } from 'amplify-auth-hooks';
 import clsx from 'clsx';
 import { AppBar, Toolbar, IconButton, Typography, Menu, MenuItem, Divider } from '@mui/material';
-import { Theme } from '@mui/material/styles';
-import makeStyles from '@mui/styles/makeStyles';
-import createStyles from '@mui/styles/createStyles';
+import { styled, Theme } from '@mui/material/styles';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 
 import { UsernameAttribute } from './types';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    toolbar: {
-      paddingRight: 24,
-    },
-    title: {
-      flexGrow: 1,
-    },
-    appBar: {
-      zIndex: theme.zIndex.drawer + 1,
-      transition: theme.transitions.create(['width', 'margin'], {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
-    },
-  }),
-);
+const PREFIX = 'Greetings';
+
+const classes = {
+  toolbar: `${PREFIX}-toolbar`,
+  title: `${PREFIX}-title`,
+  appBar: `${PREFIX}-appBar`,
+};
+
+const StyledAppBar = styled(AppBar)(({ theme }: { theme: Theme }) => ({
+  [`& .${classes.toolbar}`]: {
+    paddingRight: 24,
+  },
+
+  [`& .${classes.title}`]: {
+    flexGrow: 1,
+  },
+
+  [`&.${classes.appBar}`]: {
+    zIndex: theme.zIndex.drawer + 1,
+    transition: theme.transitions.create(["width", "margin"], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+  },
+}));
 
 export interface GreetingsProps {
   renderUserMenu?: () => React.ReactElement;
@@ -52,8 +58,6 @@ export const Greetings: React.FC<GreetingsProps> = (props) => {
   const signOut = useSignOut(globalSignOut);
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
-  const classes = useStyles();
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>): void => {
     setAnchorEl(event.currentTarget);
@@ -81,7 +85,7 @@ export const Greetings: React.FC<GreetingsProps> = (props) => {
   };
 
   return (
-    <AppBar position="absolute" className={clsx(classes.appBar, className)}>
+    <StyledAppBar position="absolute" className={clsx(classes.appBar, className)}>
       <Toolbar className={classes.toolbar}>
         {burgerMenu}
         {typeof title === 'string' ? (
@@ -114,6 +118,6 @@ export const Greetings: React.FC<GreetingsProps> = (props) => {
           <FormattedMessage id="greetings.menu.logout" defaultMessage="Logout" />
         </MenuItem>
       </Menu>
-    </AppBar>
+    </StyledAppBar>
   );
 };

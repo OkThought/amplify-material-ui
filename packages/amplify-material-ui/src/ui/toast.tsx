@@ -6,9 +6,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import CloseIcon from '@mui/icons-material/Close';
 import WarningIcon from '@mui/icons-material/Warning';
 import { colors, IconButton, Snackbar, SnackbarOrigin, SnackbarContent } from '@mui/material';
-import { Theme } from '@mui/material/styles';
-
-import makeStyles from '@mui/styles/makeStyles';
+import { styled, Theme } from '@mui/material/styles';
 
 const variantIcon = {
   success: CheckCircleIcon,
@@ -17,30 +15,48 @@ const variantIcon = {
   info: InfoIcon,
 };
 
-const useStyles = makeStyles((theme: Theme) => ({
-  success: {
+const PREFIX = 'Toast';
+
+const classes = {
+  success: `${PREFIX}-success`,
+  error: `${PREFIX}-error`,
+  info: `${PREFIX}-info`,
+  warning: `${PREFIX}-warning`,
+  icon: `${PREFIX}-icon`,
+  iconVariant: `${PREFIX}-iconVariant`,
+  message: `${PREFIX}-message`
+};
+
+const StyledSnackbar = styled(Snackbar)(({theme}: { theme: Theme }) => ({
+  [`& .${classes.success}`]: {
     backgroundColor: colors.green[600],
   },
-  error: {
+
+  [`& .${classes.error}`]: {
     backgroundColor: theme.palette.error.dark,
   },
-  info: {
+
+  [`& .${classes.info}`]: {
     backgroundColor: theme.palette.primary.dark,
   },
-  warning: {
+
+  [`& .${classes.warning}`]: {
     backgroundColor: colors.amber[700],
   },
-  icon: {
+
+  [`& .${classes.icon}`]: {
     fontSize: 20,
   },
-  iconVariant: {
+
+  [`& .${classes.iconVariant}`]: {
     opacity: 0.9,
     marginRight: theme.spacing(1),
   },
-  message: {
+
+  [`& .${classes.message}`]: {
     display: 'flex',
     alignItems: 'center',
-  },
+  }
 }));
 
 export interface ToastProps {
@@ -67,12 +83,11 @@ export const Toast: React.FC<ToastProps> = (props) => {
     onClose,
   } = props;
 
-  const classes = useStyles();
 
   const Icon = variantIcon[variant];
 
   return (
-    <Snackbar anchorOrigin={anchorOrigin} open={open} autoHideDuration={autoHideDuration} onClose={onClose}>
+    <StyledSnackbar anchorOrigin={anchorOrigin} open={open} autoHideDuration={autoHideDuration} onClose={onClose}>
       <SnackbarContent
         className={clsx(classes[variant], className)}
         aria-describedby="client-snackbar"
@@ -93,6 +108,6 @@ export const Toast: React.FC<ToastProps> = (props) => {
           </IconButton>,
         ]}
       />
-    </Snackbar>
+    </StyledSnackbar>
   );
 };

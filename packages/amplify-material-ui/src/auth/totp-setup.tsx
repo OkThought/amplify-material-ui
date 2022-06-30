@@ -2,9 +2,7 @@ import * as React from 'react';
 import { useIntl, FormattedMessage } from 'react-intl';
 import { useTOTPSetup } from 'amplify-auth-hooks';
 import { Button } from '@mui/material';
-import { Theme } from '@mui/material/styles';
-import makeStyles from '@mui/styles/makeStyles';
-import createStyles from '@mui/styles/createStyles';
+import { styled, Theme } from '@mui/material/styles';
 import { Formik, Field, Form } from 'formik';
 import { TextField } from 'formik-mui';
 import QRCode from 'qrcode.react';
@@ -13,20 +11,25 @@ import { FormSection, SectionHeader, SectionBody, SectionFooter } from '../ui';
 import { useNotificationContext } from '../notification';
 import { Loading } from './loading';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    form: {
-      width: '100%', // Fix IE 11 issue.
-      marginTop: theme.spacing(1),
-    },
-    submit: {
-      margin: theme.spacing(3, 0, 2),
-    },
-  }),
-);
+const PREFIX = 'TOTPSetup';
+
+const classes = {
+  form: `${PREFIX}-form`,
+  submit: `${PREFIX}-submit`
+};
+
+const StyledFormik = styled(Formik)(({ theme }: { theme: Theme }) => ({
+  [`& .${classes.form}`]: {
+    width: '100%', // Fix IE 11 issue.
+    marginTop: theme.spacing(1)
+  },
+
+  [`& .${classes.submit}`]: {
+    margin: theme.spacing(3, 0, 2)
+  }
+})) as typeof Formik;
 
 export const TOTPSetup: React.FC = () => {
-  const classes = useStyles();
   const { formatMessage } = useIntl();
   const { showNotification } = useNotificationContext();
   const { code, verifyTotpToken } = useTOTPSetup();
@@ -34,7 +37,7 @@ export const TOTPSetup: React.FC = () => {
   if (!code) return <Loading />;
 
   return (
-    <Formik<{ totpCode: string }>
+    <StyledFormik<{ totpCode: string }>
       initialValues={{
         totpCode: '',
       }}
@@ -91,6 +94,6 @@ export const TOTPSetup: React.FC = () => {
           </SectionFooter>
         </FormSection>
       )}
-    </Formik>
+    </StyledFormik>
   );
 };

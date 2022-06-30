@@ -2,9 +2,7 @@ import * as React from 'react';
 import { useIntl, FormattedMessage } from 'react-intl';
 import { useConfirmSignUp } from 'amplify-auth-hooks';
 import { Button, Grid, Link } from '@mui/material';
-import { Theme } from '@mui/material/styles';
-import makeStyles from '@mui/styles/makeStyles';
-import createStyles from '@mui/styles/createStyles';
+import { styled, Theme } from '@mui/material/styles';
 import { Formik, Field, Form } from 'formik';
 import { TextField } from 'formik-mui';
 
@@ -12,26 +10,31 @@ import { FormSection, SectionHeader, SectionBody, SectionFooter } from '../ui';
 import { useNotificationContext } from '../notification';
 import { ChangeAuthStateLink } from './change-auth-state-link';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    form: {
-      width: '100%', // Fix IE 11 issue.
-      marginTop: theme.spacing(1),
-    },
-    submit: {
-      margin: theme.spacing(3, 0, 2),
-    },
-  }),
-);
+const PREFIX = 'ConfirmSignUp';
+
+const classes = {
+  form: `${PREFIX}-form`,
+  submit: `${PREFIX}-submit`,
+};
+
+const StyledFormik = styled(Formik)(({ theme }: { theme: Theme }) => ({
+  [`& .${classes.form}`]: {
+    width: '100%', // Fix IE 11 issue.
+    marginTop: theme.spacing(1),
+  },
+
+  [`& .${classes.submit}`]: {
+    margin: theme.spacing(3, 0, 2),
+  },
+})) as typeof Formik;
 
 export const ConfirmSignUp: React.FC = () => {
-  const classes = useStyles();
   const { formatMessage } = useIntl();
   const { showNotification } = useNotificationContext();
   const { confirm, resend } = useConfirmSignUp();
 
   return (
-    <Formik<{ code: string }>
+    <StyledFormik<{ code: string }>
       initialValues={{
         code: '',
       }}
@@ -101,6 +104,6 @@ export const ConfirmSignUp: React.FC = () => {
           </Form>
         </FormSection>
       )}
-    </Formik>
+    </StyledFormik>
   );
 };

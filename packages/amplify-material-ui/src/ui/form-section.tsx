@@ -1,31 +1,32 @@
 import * as React from 'react';
 import { Paper } from '@mui/material';
-import { Theme } from '@mui/material/styles';
-
-import makeStyles from '@mui/styles/makeStyles';
-import createStyles from '@mui/styles/createStyles';
+import { styled, Theme } from '@mui/material/styles';
 
 import { FormContainer } from './form-container';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    paper: {
+const PREFIX = 'FormSection';
+
+const classes = {
+  paper: `${PREFIX}-paper`
+};
+
+const StyledFormContainer = styled(FormContainer)(
+  ({ theme }: { theme: Theme }) => ({
+    [`& .${classes.paper}`]: {
       marginTop: theme.spacing(12),
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
       minWidth: '300px',
-      padding: theme.spacing(1),
-    },
-  }),
+      padding: theme.spacing(1)
+    }
+  })
 );
 
 export const FormSection: React.FC = ({ children }) => {
-  const classes = useStyles();
-
   return (
-    <FormContainer>
+    <StyledFormContainer>
       <Paper className={classes.paper}>{children}</Paper>
-    </FormContainer>
+    </StyledFormContainer>
   );
 };

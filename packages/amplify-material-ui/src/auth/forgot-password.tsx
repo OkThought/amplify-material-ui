@@ -2,9 +2,7 @@ import * as React from 'react';
 import { useIntl, FormattedMessage } from 'react-intl';
 import { useForgotPassword } from 'amplify-auth-hooks';
 import { Button, Grid, Link } from '@mui/material';
-import { Theme } from '@mui/material/styles';
-import makeStyles from '@mui/styles/makeStyles';
-import createStyles from '@mui/styles/createStyles';
+import { styled, Theme } from '@mui/material/styles';
 import { Formik, Field, Form } from 'formik';
 import { TextField } from 'formik-mui';
 
@@ -13,20 +11,25 @@ import { useNotificationContext } from '../notification';
 import { useUsernameField } from './use-username-field';
 import { ChangeAuthStateLink } from './change-auth-state-link';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    form: {
-      width: '100%', // Fix IE 11 issue.
-      marginTop: theme.spacing(1),
-    },
-    submit: {
-      margin: theme.spacing(3, 0, 2),
-    },
-  }),
-);
+const PREFIX = 'ForgotPassword';
+
+const classes = {
+  form: `${PREFIX}-form`,
+  submit: `${PREFIX}-submit`
+};
+
+const StyledFormik = styled(Formik)(({ theme }: { theme: Theme }) => ({
+  [`& .${classes.form}`]: {
+    width: '100%', // Fix IE 11 issue.
+    marginTop: theme.spacing(1)
+  },
+
+  [`& .${classes.submit}`]: {
+    margin: theme.spacing(3, 0, 2)
+  }
+})) as typeof Formik;
 
 export const ForgotPassword: React.FC = () => {
-  const classes = useStyles();
   const { formatMessage } = useIntl();
   const { showNotification } = useNotificationContext();
   const { delivery, submit, send, username } = useForgotPassword();
@@ -39,7 +42,7 @@ export const ForgotPassword: React.FC = () => {
   );
 
   const submitView = (): React.ReactElement => (
-    <Formik<{ code: string; password: string }>
+    <StyledFormik<{ code: string; password: string }>
       initialValues={{
         code: '',
         password: '',
@@ -113,11 +116,11 @@ export const ForgotPassword: React.FC = () => {
           </Form>
         </FormSection>
       )}
-    </Formik>
+    </StyledFormik>
   );
 
   const sendView = (): React.ReactElement => (
-    <Formik<{ [fieldName: string]: string }>
+    <StyledFormik<{ [fieldName: string]: string }>
       initialValues={{
         [usernamefieldName]: '',
       }}
@@ -165,7 +168,7 @@ export const ForgotPassword: React.FC = () => {
           </Form>
         </FormSection>
       )}
-    </Formik>
+    </StyledFormik>
   );
 
   return delivery || username ? submitView() : sendView();

@@ -2,9 +2,7 @@ import * as React from 'react';
 import { useIntl, FormattedMessage } from 'react-intl';
 import { useSignUp } from 'amplify-auth-hooks';
 import { Button, Grid } from '@mui/material';
-import { Theme } from '@mui/material/styles';
-import makeStyles from '@mui/styles/makeStyles';
-import createStyles from '@mui/styles/createStyles';
+import { styled, Theme } from '@mui/material/styles';
 import { Formik, Field, Form } from 'formik';
 import { TextField } from 'formik-mui';
 
@@ -13,17 +11,23 @@ import { useNotificationContext } from '../notification';
 import { ChangeAuthStateLink } from './change-auth-state-link';
 import { UsernameAttribute } from './types';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    form: {
-      width: '100%', // Fix IE 11 issue.
-      marginTop: theme.spacing(1),
-    },
-    submit: {
-      margin: theme.spacing(3, 0, 2),
-    },
-  }),
-);
+const PREFIX = 'SignUp';
+
+const classes = {
+  form: `${PREFIX}-form`,
+  submit: `${PREFIX}-submit`
+};
+
+const StyledFormik = styled(Formik)(({ theme }: { theme: Theme }) => ({
+  [`& .${classes.form}`]: {
+    width: "100%", // Fix IE 11 issue.
+    marginTop: theme.spacing(1),
+  },
+
+  [`& .${classes.submit}`]: {
+    margin: theme.spacing(3, 0, 2),
+  },
+})) as typeof Formik;
 
 export type SignUpValues = Record<string, string>;
 
@@ -100,13 +104,12 @@ export const SignUp: React.FC<SignUpProps> = (props) => {
   const initialValues = signUpConfig?.initialValues ?? {};
   signUpFields.forEach((field) => (initialValues[field.key] = initialValues[field.key] ?? ''));
 
-  const classes = useStyles();
   const { formatMessage } = useIntl();
   const { showNotification } = useNotificationContext();
   const signUp = useSignUp();
 
   return (
-    <Formik<SignUpValues>
+    <StyledFormik<SignUpValues>
       initialValues={initialValues}
       onSubmit={async ({ email, password, ...attributes }): Promise<void> => {
         try {
@@ -179,6 +182,6 @@ export const SignUp: React.FC<SignUpProps> = (props) => {
           </Form>
         </FormSection>
       )}
-    </Formik>
+    </StyledFormik>
   );
 };

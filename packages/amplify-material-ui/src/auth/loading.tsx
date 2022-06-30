@@ -1,18 +1,21 @@
 import * as React from 'react';
 import { CircularProgress } from '@mui/material';
-import { Theme } from '@mui/material/styles';
-
-import makeStyles from '@mui/styles/makeStyles';
-import createStyles from '@mui/styles/createStyles';
+import { styled, Theme } from '@mui/material/styles';
 
 import { FormSection } from '../ui';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    progress: {
-      margin: theme.spacing(2),
-    },
-  }),
+const PREFIX = 'Loading';
+
+const classes = {
+  progress: `${PREFIX}-progress`
+};
+
+const StyledFormSection = styled(FormSection)(
+  ({ theme }: { theme: Theme }) => ({
+    [`& .${classes.progress}`]: {
+      margin: theme.spacing(2)
+    }
+  })
 );
 
 export interface LoadingProps {
@@ -20,12 +23,10 @@ export interface LoadingProps {
 }
 
 export const Loading: React.FC<LoadingProps> = ({ color }) => {
-  const classes = useStyles();
-
   return (
-    <FormSection>
+    <StyledFormSection>
       <CircularProgress className={classes.progress} color={color} />
-    </FormSection>
+    </StyledFormSection>
   );
 };
 
